@@ -15,29 +15,22 @@
  */
 package com.google.plus.samples.photohunt.model;
 
-import static com.google.plus.samples.photohunt.model.OfyService.ofy;
-
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.api.images.ServingUrlOptions;
 import com.google.gson.annotations.Expose;
 import com.google.plus.samples.photohunt.PhotosServlet;
-
 import com.googlecode.objectify.Key;
-import com.googlecode.objectify.annotation.Cache;
-import com.googlecode.objectify.annotation.Entity;
-import com.googlecode.objectify.annotation.Id;
-import com.googlecode.objectify.annotation.Ignore;
-import com.googlecode.objectify.annotation.Index;
-import com.googlecode.objectify.annotation.OnLoad;
-
+import com.googlecode.objectify.annotation.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
 import java.util.List;
+
+import static com.google.plus.samples.photohunt.model.OfyService.ofy;
 
 /**
  * Represents a User's Photo in PhotoHunt.  Contains all of the properties that
@@ -47,211 +40,202 @@ import java.util.List;
  */
 @Entity
 @Cache
-@EqualsAndHashCode(of="id", callSuper=false)
+@EqualsAndHashCode(of = "id", callSuper = false)
 public class Photo extends Jsonifiable {
-  @Expose
-  public static String kind = "photohunt#photo";
+    /**
+     * Default size of thumbnails.
+     */
+    @Expose
+    @Ignore
+    public static final int DEFAULT_THUMBNAIL_SIZE = 400;
+    @Expose
+    public static String kind = "photohunt#photo";
+    /**
+     * ImagesService to use for image operation execution.
+     */
+    protected static ImagesService images =
+            ImagesServiceFactory.getImagesService();
+    /**
+     * Primary identifier of this Photo.
+     */
+    @Id
+    @Getter
+    @Expose
+    public Long id;
 
-  /**
-   * ImagesService to use for image operation execution.
-   */
-  protected static ImagesService images =
-      ImagesServiceFactory.getImagesService();
+    /**
+     * ID of the User who owns this Photo.
+     */
+    @Index
+    @Getter
+    @Setter
+    @Expose
+    public Long ownerUserId;
 
-  /**
-   * @param id ID of Photo for which to get a Key.
-   * @return Key representation of given Photo's ID.
-   */
-  public static Key<Photo> key(long id) {
-    return Key.create(Photo.class, id);
-  }
+    /**
+     * Display name of the User who owns this Photo.
+     */
+    @Getter
+    @Setter
+    @Expose
+    public String ownerDisplayName;
 
-  /**
-   * Primary identifier of this Photo.
-   */
-  @Id
-  @Getter
-  @Expose
-  public Long id;
+    /**
+     * Profile URL of the User who owns this Photo.
+     */
+    @Getter
+    @Setter
+    @Expose
+    public String ownerProfileUrl;
 
-  /**
-   * ID of the User who owns this Photo.
-   */
-  @Index
-  @Getter
-  @Setter
-  @Expose
-  public Long ownerUserId;
+    /**
+     * Profile photo of the User who owns this Photo.
+     */
+    @Getter
+    @Setter
+    @Expose
+    public String ownerProfilePhoto;
 
-  /**
-   * Display name of the User who owns this Photo.
-   */
-  @Getter
-  @Setter
-  @Expose
-  public String ownerDisplayName;
+    /**
+     * ID of the Theme to which this Photo belongs.
+     */
+    @Index
+    @Getter
+    @Setter
+    @Expose
+    public Long themeId;
 
-  /**
-   * Profile URL of the User who owns this Photo.
-   */
-  @Getter
-  @Setter
-  @Expose
-  public String ownerProfileUrl;
+    /**
+     * Display name of the Theme to which this Photo belongs.
+     */
+    @Index
+    @Getter
+    @Setter
+    @Expose
+    public String themeDisplayName;
 
-  /**
-   * Profile photo of the User who owns this Photo.
-   */
-  @Getter
-  @Setter
-  @Expose
-  public String ownerProfilePhoto;
+    /**
+     * Number of votes this Photo has received.
+     */
+    @Index
+    @Getter
+    @Setter
+    @Expose
+    @Ignore
+    public int numVotes;
 
-  /**
-   * ID of the Theme to which this Photo belongs.
-   */
-  @Index
-  @Getter
-  @Setter
-  @Expose
-  public Long themeId;
+    /**
+     * True if the current user has already voted this Photo.
+     */
+    @Getter
+    @Setter
+    @Expose
+    public boolean voted;
+    /**
+     * Date this Photo was uploaded to PhotoHunt.
+     */
+    @Getter
+    @Setter
+    @Expose
+    public Date created;
+    /**
+     * URL for full-size image of this Photo.
+     */
+    @Expose
+    @Ignore
+    public String fullsizeUrl;
+    /**
+     * URL for thumbnail image of this Photo.
+     */
+    @Expose
+    @Getter
+    @Ignore
+    public String thumbnailUrl;
+    /**
+     * URL for vote call to action on this photo.
+     */
+    @Expose
+    @Getter
+    @Ignore
+    public String voteCtaUrl;
+    /**
+     * URL for interactive posts and deep linking to this photo.
+     */
+    @Expose
+    @Getter
+    @Ignore
+    public String photoContentUrl;
+    /**
+     * Image blob key for this Photo.
+     */
+    @Getter
+    @Setter
+    private String imageBlobKey;
 
-  /**
-   * Display name of the Theme to which this Photo belongs.
-   */
-  @Index
-  @Getter
-  @Setter
-  @Expose
-  public String themeDisplayName;
-
-  /**
-   * Number of votes this Photo has received.
-   */
-  @Index
-  @Getter
-  @Setter
-  @Expose
-  @Ignore
-  public int numVotes;
-
-  /**
-   * True if the current user has already voted this Photo.
-   */
-  @Getter
-  @Setter
-  @Expose
-  public boolean voted;
-
-  /**
-   * Image blob key for this Photo.
-   */
-  @Getter
-  @Setter
-  private String imageBlobKey;
-
-  /**
-   * Date this Photo was uploaded to PhotoHunt.
-   */
-  @Getter
-  @Setter
-  @Expose
-  public Date created;
-
-  /**
-   * URL for full-size image of this Photo.
-   */
-  @Expose
-  @Ignore
-  public String fullsizeUrl;
-
-  /**
-   * URL for thumbnail image of this Photo.
-   */
-  @Expose
-  @Getter
-  @Ignore
-  public String thumbnailUrl;
-
-  /**
-   * URL for vote call to action on this photo.
-   */
-  @Expose
-  @Getter
-  @Ignore
-  public String voteCtaUrl;
-
-  /**
-   * URL for interactive posts and deep linking to this photo.
-   */
-  @Expose
-  @Getter
-  @Ignore
-  public String photoContentUrl;
-
-  /**
-   * Default size of thumbnails.
-   */
-  @Expose
-  @Ignore
-  public static final int DEFAULT_THUMBNAIL_SIZE = 400;
-
-  /**
-   * Setup image URLs (fullsizeUrl and thumbnailUrl) after this Photo has been
-   * loaded.
-   */
-  @OnLoad
-  protected void setupImageUrls() {
-    fullsizeUrl = getImageUrl();
-    thumbnailUrl = getImageUrl(DEFAULT_THUMBNAIL_SIZE);
-  }
-
-  /**
-   * @return URL for full-size image of this photo.
-   */
-  public String getImageUrl() {
-    return getImageUrl(-1);
-  }
-
-  /**
-   * @param size Size of image for URL to return.
-   * @return URL for images for this Photo of given size.
-   */
-  public String getImageUrl(int size) {
-    ServingUrlOptions options = ServingUrlOptions.Builder
-        .withBlobKey(new BlobKey(imageBlobKey))
-        .secureUrl(true);
-    if (size > -1) {
-      options.imageSize(size);
+    /**
+     * @param id ID of Photo for which to get a Key.
+     * @return Key representation of given Photo's ID.
+     */
+    public static Key<Photo> key(long id) {
+        return Key.create(Photo.class, id);
     }
-    return images.getServingUrl(options);
-  }
 
-  /**
-   * Setup voteNum after this Photo has been loaded.
-   */
-  @OnLoad
-  protected void setupVoteNum() {
-    List<Vote> votes = ofy().load().type(Vote.class)
-        .filter("photoId", id)
-        .list();
-    numVotes = votes.size();
-  }
+    /**
+     * Setup image URLs (fullsizeUrl and thumbnailUrl) after this Photo has been
+     * loaded.
+     */
+    @OnLoad
+    protected void setupImageUrls() {
+        fullsizeUrl = getImageUrl();
+        thumbnailUrl = getImageUrl(DEFAULT_THUMBNAIL_SIZE);
+    }
 
-  /**
-   * Setup voteCtaUrl after this Photo has been loaded.
-   */
-  @OnLoad
-  protected void setupVoteCtaUrl() {
-    voteCtaUrl = PhotosServlet.BASE_URL + "/photo.html?photoId=" + id +
-        "&action=VOTE";
-  }
+    /**
+     * @return URL for full-size image of this photo.
+     */
+    public String getImageUrl() {
+        return getImageUrl(-1);
+    }
 
-  /**
-   * Setup photoContentUrl after this Photo has been loaded.
-   */
-  @OnLoad
-  protected void photoDeepLinkUrl() {
-    photoContentUrl = PhotosServlet.BASE_URL + "/photo.html?photoId=" + id;
-  }
+    /**
+     * @param size Size of image for URL to return.
+     * @return URL for images for this Photo of given size.
+     */
+    public String getImageUrl(int size) {
+        ServingUrlOptions options = ServingUrlOptions.Builder
+                .withBlobKey(new BlobKey(imageBlobKey))
+                .secureUrl(true);
+        if (size > -1) {
+            options.imageSize(size);
+        }
+        return images.getServingUrl(options);
+    }
+
+    /**
+     * Setup voteNum after this Photo has been loaded.
+     */
+    @OnLoad
+    protected void setupVoteNum() {
+        List<Vote> votes = ofy().load().type(Vote.class)
+                .filter("photoId", id)
+                .list();
+        numVotes = votes.size();
+    }
+
+    /**
+     * Setup voteCtaUrl after this Photo has been loaded.
+     */
+    @OnLoad
+    protected void setupVoteCtaUrl() {
+        voteCtaUrl = PhotosServlet.BASE_URL + "/photo.html?photoId=" + id +
+                "&action=VOTE";
+    }
+
+    /**
+     * Setup photoContentUrl after this Photo has been loaded.
+     */
+    @OnLoad
+    protected void photoDeepLinkUrl() {
+        photoContentUrl = PhotosServlet.BASE_URL + "/photo.html?photoId=" + id;
+    }
 }

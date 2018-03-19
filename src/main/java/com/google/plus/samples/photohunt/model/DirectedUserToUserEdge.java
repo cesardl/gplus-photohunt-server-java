@@ -21,7 +21,6 @@ import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -35,36 +34,34 @@ import lombok.Setter;
 @Entity
 @Cache
 public class DirectedUserToUserEdge {
-  /**
-   * @param id ID of a DirectedUserToUserEdge for which to create Key.
-   * @return Key based on given ID.
-   */
-  public static Key<DirectedUserToUserEdge> key(long id) {
-    return Key.create(DirectedUserToUserEdge.class, id);
-  }
+    /**
+     * Primary identifier of this edge.
+     */
+    @Id
+    @Getter
+    Long id;
+    /**
+     * User who owns this relationship.  In Google+, this would be the user who
+     * has added targetUserId to their circles.
+     */
+    @Getter
+    @Setter
+    @Index
+    Long ownerUserId;
+    /**
+     * Friend of the relationship owner.  This person does not necessarily have
+     * the owner in their own social graph.
+     */
+    @Getter
+    @Setter
+    @Index
+    Long friendUserId;
 
-  /**
-   * Primary identifier of this edge.
-   */
-  @Id
-  @Getter
-  Long id;
-
-  /**
-   * User who owns this relationship.  In Google+, this would be the user who
-   * has added targetUserId to their circles.
-   */
-  @Getter
-  @Setter
-  @Index
-  Long ownerUserId;
-
-  /**
-   * Friend of the relationship owner.  This person does not necessarily have
-   * the owner in their own social graph.
-   */
-  @Getter
-  @Setter
-  @Index
-  Long friendUserId;
+    /**
+     * @param id ID of a DirectedUserToUserEdge for which to create Key.
+     * @return Key based on given ID.
+     */
+    public static Key<DirectedUserToUserEdge> key(long id) {
+        return Key.create(DirectedUserToUserEdge.class, id);
+    }
 }

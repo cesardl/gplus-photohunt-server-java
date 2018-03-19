@@ -21,15 +21,15 @@ angular.module('photoHunt.services', [])
         if ($location.port())
           rootUrl += ':' + $location.port();
         return rootUrl;
-      };
+      }
       return {
         'clientId': '993333333553-295ugv03ktbpmei121ggg78iebo1j38k.apps.googleusercontent.com',
         'apiBase': '/api/',
         'rootUrl': getRootUrl(),
-        'scopes': 'https://www.googleapis.com/auth/plus.login ',
+        'scopes': 'https://www.googleapis.com/auth/plus.login',
         'requestvisibleactions': 'http://schemas.google.com/AddActivity ' +
                 'http://schemas.google.com/ReviewActivity',
-        'cookiepolicy': 'single_host_origin',
+        'cookiepolicy': 'single_host_origin'
         // If you have an android application and you want to enable
         // Over-The-Air install, remove the comment below and use the package
         // name associated to the project's Client Id for installed applications

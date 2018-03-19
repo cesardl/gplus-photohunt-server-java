@@ -46,7 +46,7 @@ function PhotoHuntCtrl($scope, $location, Conf, PhotoHuntApi) {
       $scope.friendsPhotos = [];
       //$scope.renderSignIn();
     });
-  }
+  };
   
   // methods
   $scope.orderBy = function (criteria) {
@@ -87,14 +87,14 @@ function PhotoHuntCtrl($scope, $location, Conf, PhotoHuntApi) {
       }
     });
     return photos;
-  }
+  };
   
   $scope.deletePhoto = function(photoId) {
     PhotoHuntApi.deletePhoto(photoId);
     $scope.userPhotos = $scope.removePhotoFromArray($scope.userPhotos, photoId);
     $scope.friendsPhotos = $scope.removePhotoFromArray($scope.friendsPhotos, photoId);
     $scope.allPhotos = $scope.removePhotoFromArray($scope.allPhotos, photoId);
-  }
+  };
   
   $scope.removePhotoFromArray = function (array, photoId) {
     var newArray = [];
@@ -104,7 +104,7 @@ function PhotoHuntCtrl($scope, $location, Conf, PhotoHuntApi) {
       }
     });
     return newArray;
-  }
+  };
   
   $scope.getUserPhotos = function() {
     if ($scope.hasUserProfile && ($scope.themes.length > 0)) {
@@ -113,27 +113,27 @@ function PhotoHuntCtrl($scope, $location, Conf, PhotoHuntApi) {
         $scope.userPhotos = $scope.adaptPhotos(response.data);
       });
     }
-  }
+  };
   
   $scope.getAllPhotos = function() {
     PhotoHuntApi.getAllPhotosByTheme($scope.selectedTheme.id)
     	.then(function(response) {
       $scope.allPhotos = $scope.adaptPhotos(response.data);
     });
-  }
+  };
   
   $scope.getFriendsPhotos = function() {
     PhotoHuntApi.getFriendsPhotosByTheme($scope.selectedTheme.id)
         .then(function(response) {
       $scope.friendsPhotos = $scope.adaptPhotos(response.data);
     });
-  }
+  };
   
   $scope.getUploadUrl = function(params) {
     PhotoHuntApi.getUploadUrl().then(function(response) {
       $scope.uploadUrl = response.data;
     });
-  }
+  };
   
   $scope.checkIfVoteActionRequested = function() {
     if($location.search()['action'] == 'VOTE') {
@@ -144,14 +144,14 @@ function PhotoHuntCtrl($scope, $location, Conf, PhotoHuntApi) {
         $scope.notification = 'Thanks for voting!';
       });
     }
-  }
+  };
   
   $scope.getFriends = function() {
     PhotoHuntApi.getFriends().then(function(response) {
       $scope.friends = response.data;
       $scope.getFriendsPhotos();
     })
-  }
+  };
   
   $scope.selectTheme = function(themeIndex) {
     $scope.selectedTheme = $scope.themes[themeIndex];
@@ -165,26 +165,27 @@ function PhotoHuntCtrl($scope, $location, Conf, PhotoHuntApi) {
     if ($scope.friends.length) {
       $scope.getFriendsPhotos();
     }
-  }
+  };
   
   $scope.canUpload = function() {
     if ($scope.uploadUrl)
       return true;
     else
       return false;
-  }
+  };
   
   $scope.uploadedPhoto = function(uploadedPhoto) {
     uploadedPhoto['canDelete'] = true;
     $scope.userPhotos.unshift(uploadedPhoto);
     $scope.allPhotos.unshift(uploadedPhoto);
     $scope.getUploadUrl();
-  }
+  };
   
   $scope.signedIn = function(profile) {
     $scope.isSignedIn = true;
     $scope.userProfile = profile;
     $scope.hasUserProfile = true;
+    console.log('profile loaded', profile);
     $scope.getUserPhotos();
     // refresh the state of operations that depend on the local user
     $scope.allPhotos = $scope.adaptPhotos($scope.allPhotos);
@@ -201,13 +202,13 @@ function PhotoHuntCtrl($scope, $location, Conf, PhotoHuntApi) {
         $scope.highlightedPhoto = response.data;
       })
     }
-  }
+  };
   
   $scope.signIn = function(authResult) {
     $scope.$apply(function() {
       $scope.processAuth(authResult);
     });
-  }
+  };
   
   $scope.processAuth = function(authResult) {
     $scope.immediateFailed = true;
@@ -227,7 +228,7 @@ function PhotoHuntCtrl($scope, $location, Conf, PhotoHuntApi) {
         console.log('Error:' + authResult['error']);
       }
     }
-  }
+  };
   
   $scope.renderSignIn = function() {
     gapi.signin.render('myGsignin', {
@@ -240,7 +241,7 @@ function PhotoHuntCtrl($scope, $location, Conf, PhotoHuntApi) {
       'cookiepolicy': Conf.cookiepolicy,
       'accesstype': 'offline'
     });
-  }
+  };
   
   $scope.start = function() {
     $scope.renderSignIn();
@@ -266,7 +267,7 @@ function PhotoHuntCtrl($scope, $location, Conf, PhotoHuntApi) {
       gapi.interactivepost.render('invite', options);
       $scope.getAllPhotos();
     });
-  }
+  };
   
   $scope.start();
   

@@ -26,27 +26,27 @@ import com.googlecode.objectify.ObjectifyService;
  * @author vicfryzel@google.com (Vic Fryzel)
  */
 public class OfyService {
-  // Register our models with Objectify.  If you add a new model, make sure to
-  // register it here as well.
-  static {
-    factory().register(DirectedUserToUserEdge.class);
-    factory().register(Photo.class);
-    factory().register(Theme.class);
-    factory().register(User.class);
-    factory().register(Vote.class);
-  }
+    // Register our models with Objectify.  If you add a new model, make sure to
+    // register it here as well.
+    static {
+        factory().register(DirectedUserToUserEdge.class);
+        factory().register(Photo.class);
+        factory().register(Theme.class);
+        factory().register(User.class);
+        factory().register(Vote.class);
+    }
 
-  /**
-   * @return Objectify instance to use for datastore interaction.
-   */
-  public static Objectify ofy() {
-    return ObjectifyService.ofy();
-  }
+    /**
+     * @return Objectify instance to use for datastore interaction.
+     */
+    public static Objectify ofy() {
+        return ObjectifyService.ofy();
+    }
 
-  /**
-   * @return Factory for Objectify instances.
-   */
-  public static ObjectifyFactory factory() {
-    return ObjectifyService.factory();
-  }
+    /**
+     * @return Factory for Objectify instances.
+     */
+    public static ObjectifyFactory factory() {
+        return ObjectifyService.factory();
+    }
 }

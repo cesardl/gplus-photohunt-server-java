@@ -60,7 +60,7 @@ angular.module('photoHunt.directives', ['photoHunt.services'])
             'requestvisibleactions': Conf.requestvisibleactions,
             'scope': Conf.scopes,
             'cookiepolicy': Conf.cookiepolicy
-          }
+          };
           gapi.interactivepost.render(
               element.find('.toolbar button').get(0), options);
         }

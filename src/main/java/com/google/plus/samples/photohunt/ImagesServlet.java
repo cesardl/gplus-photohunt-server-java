@@ -25,49 +25,49 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Provides an API for creating and retrieving URLs to which photo images can be
  * uploaded.
- *
+ * <p>
  * This servlet provides the /api/images end-point, and exposes the following
  * operations:
- *
- *   POST /api/images
+ * <p>
+ * POST /api/images
  *
  * @author vicfryzel@google.com (Vic Fryzel)
  */
 public class ImagesServlet extends JsonRestServlet {
-  /**
-   * BlobstoreService to use for upload URL generation.
-   */
-  private final BlobstoreService blobstoreService =
-      BlobstoreServiceFactory.getBlobstoreService();
+    /**
+     * BlobstoreService to use for upload URL generation.
+     */
+    private final BlobstoreService blobstoreService =
+            BlobstoreServiceFactory.getBlobstoreService();
 
-  /**
-   * Exposed as `POST /api/images`.
-   *
-   * Creates and returns a URL that can be used to upload an image for a photo.
-   * Returned URL, after receiving an upload, will fire a callback (resend
-   * the entire HTTP request) to /api/photos.
-   *
-   * Takes no request payload.
-   *
-   * Returns the following JSON response representing an upload URL:
-   *
-   *   "http://appid.appspot.com/_ah/upload/upload-key"
-   *
-   * Issues the following errors along with corresponding HTTP response codes:
-   * 401: "Unauthorized request"
-   *
-   * @see javax.servlet.http.HttpServlet#doPost(
-   *     javax.servlet.http.HttpServletRequest,
-   *     javax.servlet.http.HttpServletResponse)
-   */
-  @Override
-  protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
-    try {
-      checkAuthorization(req);
-      sendResponse(req, resp, blobstoreService.createUploadUrl("/api/photos"),
-          "photohunt#uploadurl");
-    } catch (UserNotAuthorizedException e) {
-      sendError(resp, 401, "Unauthorized request");
+    /**
+     * Exposed as `POST /api/images`.
+     * <p>
+     * Creates and returns a URL that can be used to upload an image for a photo.
+     * Returned URL, after receiving an upload, will fire a callback (resend
+     * the entire HTTP request) to /api/photos.
+     * <p>
+     * Takes no request payload.
+     * <p>
+     * Returns the following JSON response representing an upload URL:
+     * <p>
+     * "http://appid.appspot.com/_ah/upload/upload-key"
+     * <p>
+     * Issues the following errors along with corresponding HTTP response codes:
+     * 401: "Unauthorized request"
+     *
+     * @see javax.servlet.http.HttpServlet#doPost(
+     *javax.servlet.http.HttpServletRequest,
+     * javax.servlet.http.HttpServletResponse)
+     */
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
+        try {
+            checkAuthorization(req);
+            sendResponse(req, resp, blobstoreService.createUploadUrl("/api/photos"),
+                    "photohunt#uploadurl");
+        } catch (UserNotAuthorizedException e) {
+            sendError(resp, 401, "Unauthorized request");
+        }
     }
-  }
 }

@@ -16,22 +16,20 @@
 
 package com.google.plus.samples.photohunt.model;
 
-import static com.google.plus.samples.photohunt.model.OfyService.ofy;
-
 import com.google.gson.annotations.Expose;
-
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
-
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Calendar;
 import java.util.Date;
+
+import static com.google.plus.samples.photohunt.model.OfyService.ofy;
 
 /**
  * Represents a Theme for Photos.
@@ -40,76 +38,71 @@ import java.util.Date;
  */
 @Entity
 @Cache
-@EqualsAndHashCode(of="id", callSuper=false)
+@EqualsAndHashCode(of = "id", callSuper = false)
 public class Theme extends Jsonifiable {
-  public static String kind = "photohunt#theme";
+    public static String kind = "photohunt#theme";
+    /**
+     * Primary identifier of this Theme.
+     */
+    @Id
+    @Getter
+    @Expose
+    public Long id;
+    /**
+     * Display name of this Theme.
+     */
+    @Getter
+    @Setter
+    @Expose
+    public String displayName;
+    /**
+     * Date that this Theme was created.
+     */
+    @Index
+    @Getter
+    @Setter
+    @Expose
+    public Date created;
+    /**
+     * Date that this Theme should start.
+     */
+    @Index
+    @Getter
+    @Setter
+    @Expose
+    public Date start;
+    /**
+     * ID of Photo to display as a preview of this Theme.
+     */
+    @Getter
+    @Setter
+    @Expose
+    public Long previewPhotoId;
 
-  /**
-   * @param id ID of Theme for which to get a Key.
-   * @return Key representation of given Theme's ID.
-   */
-  public static Key<Theme> key(long id) {
-    return Key.create(Theme.class, id);
-  }
+    /**
+     * @param id ID of Theme for which to get a Key.
+     * @return Key representation of given Theme's ID.
+     */
+    public static Key<Theme> key(long id) {
+        return Key.create(Theme.class, id);
+    }
 
-  /**
-   * Primary identifier of this Theme.
-   */
-  @Id
-  @Getter
-  @Expose
-  public Long id;
-
-  /**
-   * Display name of this Theme.
-   */
-  @Getter
-  @Setter
-  @Expose
-  public String displayName;
-
-  /**
-   * Date that this Theme was created.
-   */
-  @Index
-  @Getter
-  @Setter
-  @Expose
-  public Date created;
-
-  /**
-   * Date that this Theme should start.
-   */
-  @Index
-  @Getter
-  @Setter
-  @Expose
-  public Date start;
-
-  /**
-   * ID of Photo to display as a preview of this Theme.
-   */
-  @Getter
-  @Setter
-  @Expose
-  public Long previewPhotoId;
-
-  /**
-   * @return Current Theme for PhotoHunt today.  A current theme is the theme
-   *         for the day.  There cannot be two themes on the same day.
-   */
-  public static Theme getCurrentTheme() {
-    Calendar start = Calendar.getInstance();
-    start.set(Calendar.HOUR, 0);
-    start.set(Calendar.MINUTE, 0);
-    start.set(Calendar.SECOND, 0);
-    Calendar end = Calendar.getInstance();
-    end.set(Calendar.HOUR, 23);
-    end.set(Calendar.MINUTE, 59);
-    end.set(Calendar.SECOND, 59);
-    return ofy().load().type(Theme.class)
-        .filter("start >", start.getTime())
-        .filter("start <", end.getTime())
-        .order("-start").first().get();
-  }
+    /**
+     * @return Current Theme for PhotoHunt today.  A current theme is the theme
+     * for the day.  There cannot be two themes on the same day.
+     */
+    public static Theme getCurrentTheme() {
+        Calendar start = Calendar.getInstance();
+        start.set(Calendar.HOUR, 0);
+        start.set(Calendar.MINUTE, 0);
+        start.set(Calendar.SECOND, 0);
+        Calendar end = Calendar.getInstance();
+        end.set(Calendar.HOUR, 23);
+        end.set(Calendar.MINUTE, 59);
+        end.set(Calendar.SECOND, 59);
+        return ofy().load().type(Theme.class)
+                .filter("start >", start.getTime())
+                .filter("start <", end.getTime())
+                .order("-start").first().get();
+    }
 }
